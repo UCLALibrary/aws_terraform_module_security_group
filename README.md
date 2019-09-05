@@ -1,29 +1,31 @@
 # aws_terraform_module_security_group [![Build Status](https://travis-ci.com/UCLALibrary/aws_terraform_module_fargate.svg?branch=master)](https://travis-ci.com/UCLALibrary/aws_terraform_module_fargate)
 
-## Fargate Module Usage Example Without Load Balancer
+## Security Group Module Usage
+Creating a security group that assumes global egress and CIDR inputted ingress
 ```
-module "iiif_cloudfront" {                                                                                                                                                                                                                                                                                                                   
-  source                  = "git::https://github.com/UCLALibrary/aws_terraform_module_security_group.git"
-  app_origin_dns_name     = "${var.iiif_alb_dns_name}"                                                                                                                                                                                                                                                                                       
-  app_public_dns_names    = "${var.iiif_public_dns_names}"                                                                                                                                                                                                                                                                                   
-  app_origin_id           = "ALBOrigin-${var.iiif_alb_dns_name}"                                                                                                                                                                                                                                                                             
-  app_ssl_certificate_arn = "${var.iiif_cloudfront_ssl_certificate_arn}"                                                                                                                                                                                                                                                                     
-  app_path_pattern        = "${var.iiif_thumbnail_path_pattern}"                                                                                                                                                                                                                                                                             
-}   
+module "cantaloupe_fargate_sg" {
+  source           = "git::https://github.com/UCLALibrary/aws_terraform_module_security_group.git?ref=IIIF-395"
+  sg_name          = "my_security_group"
+  sg_description   = "my_security_group_description"
+  vpc_id           = "${aws_vpc.id}"
+  ingress_ports    = [80]
+  ingress_allowed  = [0.0.0.0/0]
+  sg_groups        = null
+  disable_sg_group = 1
+}
 ```
-
-## Fargate Module Usage Example With Load Balancer
+Creating a security group that assumes global egress and specified AWS resources for ingress. E.g. only allow load balancer or EC2 instances to access this resource
 ```
-module "iiif_cloudfront" {                                                                                                                                                                                                                                                                                                                   
-  source                  = "git::https://github.com/UCLALibrary/aws_terraform_module_security_group.git"
-  app_origin_dns_name     = "${var.iiif_alb_dns_name}"                                                                                                                                                                                                                                                                                       
-  app_public_dns_names    = "${var.iiif_public_dns_names}"                                                                                                                                                                                                                                                                                   
-  app_origin_id           = "ALBOrigin-${var.iiif_alb_dns_name}"                                                                                                                                                                                                                                                                             
-  app_ssl_certificate_arn = "${var.iiif_cloudfront_ssl_certificate_arn}"                                                                                                                                                                                                                                                                     
-  app_path_pattern        = "${var.iiif_thumbnail_path_pattern}"                                                                                                                                                                                                                                                                             
-}   
+module "cantaloupe_fargate_sg" {
+  source           = "git::https://github.com/UCLALibrary/aws_terraform_module_security_group.git?ref=IIIF-395"
+  sg_name          = "my_security_group"
+  sg_description   = "my_security_group_description"
+  vpc_id           = "${aws_vpc.id}"
+  ingress_ports    = [80]
+  sg_groups        = "${aws_lb.id}"
+  enable_sg_group = 1
+}
 ```
-
 
 ## Dependencies
 * Upload ACM certificate prior to running Terraform
