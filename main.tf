@@ -1,7 +1,7 @@
 resource "aws_security_group" "sg" {
-  name          = "${var.sg_name}"
-  description   = "${var.sg_description}"
-  vpc_id        = "${var.vpc_id}"
+  name          = var.sg_name
+  description   = var.sg_description
+  vpc_id        = var.vpc_id
 
   dynamic ingress {
     for_each = var.ingress_ports
@@ -9,8 +9,8 @@ resource "aws_security_group" "sg" {
       from_port       = ingress.value
       to_port         = ingress.value
       protocol        = "tcp"
-      cidr_blocks     = "${var.ingress_allowed}"
-      security_groups = "${var.sg_groups}"
+      cidr_blocks     = var.ingress_allowed
+      security_groups = var.sg_groups
     }
   }
 
@@ -21,4 +21,3 @@ resource "aws_security_group" "sg" {
     cidr_blocks     = ["0.0.0.0/0"]
   }
 }
-
