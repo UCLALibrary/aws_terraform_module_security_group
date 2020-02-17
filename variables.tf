@@ -9,3 +9,7 @@ variable "ingress_allowed" {
 variable "sg_groups" {
   default = null
 }
+
+variable "default_tag" {
+  default = "SG-Terraform"
+}
